@@ -23,6 +23,6 @@ public class AnalystCoverage {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ElementCollection
+    @ElementCollection //Criação de uma coleção de tipo simples, sem criar uma entidade
     private List<String> states;
 }
