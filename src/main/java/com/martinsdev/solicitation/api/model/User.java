@@ -15,6 +15,7 @@ import java.util.List;
 @Table(name = "tb_users")
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Getter
 @Setter
 @ToString
