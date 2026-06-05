@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @Table(name = "tb_solicitation")
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Getter
 @Setter
 @ToString
