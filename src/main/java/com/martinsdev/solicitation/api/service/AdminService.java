@@ -6,6 +6,7 @@ import com.martinsdev.solicitation.api.dto.UpdateCoverageRequestDTO;
 import com.martinsdev.solicitation.api.dto.UserResponseDTO;
 import com.martinsdev.solicitation.api.infra.exception.EmailAlreadyExistsException;
 import com.martinsdev.solicitation.api.infra.exception.InvalidOperationException;
+import com.martinsdev.solicitation.api.infra.exception.ResourceNotFoundException;
 import com.martinsdev.solicitation.api.model.AnalystCoverage;
 import com.martinsdev.solicitation.api.model.User;
 import com.martinsdev.solicitation.api.model.enums.RoleUser;
@@ -60,7 +61,7 @@ public class AdminService {
     public AnalystCoverageResponseDTO updateCoverage(Long userId, UpdateCoverageRequestDTO coverageRequestDTO) {
         //Buscar o usuário pelo ID
         User user = repository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException());
+                .orElseThrow(() -> new ResourceNotFoundException("User not found by id: " + userId));
 
         if (user.getRole() != RoleUser.ANALYST){
             throw new InvalidOperationException();
@@ -68,7 +69,7 @@ public class AdminService {
 
         //Se for analista, consulta no banco
         AnalystCoverage coverage = coverageRepository.findByUser(user)
-                .orElseThrow(() -> new ResourceNotFoundException());
+                .orElseThrow(() -> new ResourceNotFoundException("Coverage not found"));
 
         coverage.setStates(coverageRequestDTO.states());
         coverageRepository.save(coverage);
