@@ -64,7 +64,7 @@ public class AdminService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found by id: " + userId));
 
         if (user.getRole() != RoleUser.ANALYST){
-            throw new InvalidOperationException();
+            throw new InvalidOperationException("This operation can only be performed if the user is an ANALYST");
         }
 
         //Se for analista, consulta no banco
