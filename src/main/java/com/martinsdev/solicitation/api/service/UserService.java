@@ -21,11 +21,8 @@ public class UserService {
 
     @Transactional
     public User register(RegisterRequestDTO registerDTO) {
-
         //Verificando se já existe no banco pelo email
-        boolean alreadyExists = repository.existsByEmail(registerDTO.email());
-
-        if (alreadyExists){
+        if (repository.existsByEmail(registerDTO.email())){
             throw new EmailAlreadyExistsException(registerDTO.email());
         }
 

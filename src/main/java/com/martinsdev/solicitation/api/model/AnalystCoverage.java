@@ -9,6 +9,7 @@ import java.util.List;
 @Table(name = "tb_analyst_coverage")
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Getter
 @Setter
 @ToString
