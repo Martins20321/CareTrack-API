@@ -2,6 +2,7 @@ package com.martinsdev.solicitation.api.infra.handler;
 
 import com.martinsdev.solicitation.api.infra.exception.EmailAlreadyExistsException;
 import com.martinsdev.solicitation.api.infra.exception.ErrorResponse;
+import com.martinsdev.solicitation.api.infra.exception.InvalidOperationException;
 import com.martinsdev.solicitation.api.infra.exception.InvalidRoleException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -24,7 +25,15 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(InvalidRoleException.class)
     public ResponseEntity<ErrorResponse> handleInvalidRole(InvalidRoleException ex, HttpServletRequest request){
-        String error = "Invalid role";
+        String error = "Invalid Role";
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        ErrorResponse errorResponse = new ErrorResponse(Instant.now(), status.value(), error, ex.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(status).body(errorResponse);
+    }
+
+    @ExceptionHandler(InvalidOperationException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidOperation(InvalidOperationException ex, HttpServletRequest request){
+        String error = "Invalid Operation";
         HttpStatus status = HttpStatus.BAD_REQUEST;
         ErrorResponse errorResponse = new ErrorResponse(Instant.now(), status.value(), error, ex.getMessage(), request.getRequestURI());
         return ResponseEntity.status(status).body(errorResponse);
