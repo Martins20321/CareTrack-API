@@ -4,6 +4,7 @@ import com.martinsdev.solicitation.api.dto.SolicitationResponseDTO;
 import com.martinsdev.solicitation.api.dto.StepOneRequestDTO;
 import com.martinsdev.solicitation.api.infra.exception.InvalidOperationException;
 import com.martinsdev.solicitation.api.infra.exception.ResourceNotFoundException;
+import com.martinsdev.solicitation.api.infra.exception.UnauthorizedException;
 import com.martinsdev.solicitation.api.model.Solicitation;
 import com.martinsdev.solicitation.api.model.User;
 import com.martinsdev.solicitation.api.model.embedded.StepOneData;
