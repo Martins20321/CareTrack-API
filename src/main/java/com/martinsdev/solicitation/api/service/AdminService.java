@@ -1,8 +1,11 @@
 package com.martinsdev.solicitation.api.service;
 
+import com.martinsdev.solicitation.api.dto.AnalystCoverageResponseDTO;
 import com.martinsdev.solicitation.api.dto.CreateUserRequestDTO;
+import com.martinsdev.solicitation.api.dto.UpdateCoverageRequestDTO;
 import com.martinsdev.solicitation.api.dto.UserResponseDTO;
 import com.martinsdev.solicitation.api.infra.exception.EmailAlreadyExistsException;
+import com.martinsdev.solicitation.api.infra.exception.InvalidOperationException;
 import com.martinsdev.solicitation.api.model.AnalystCoverage;
 import com.martinsdev.solicitation.api.model.User;
 import com.martinsdev.solicitation.api.model.enums.RoleUser;
@@ -15,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -27,7 +31,7 @@ public class AdminService {
     @Transactional
     public UserResponseDTO createUser(CreateUserRequestDTO userRequestDTO) {
         //Verificando se já existe no banco pelo email
-        if (repository.existsByEmail(userRequestDTO.email())){
+        if (repository.existsByEmail(userRequestDTO.email())) {
             throw new EmailAlreadyExistsException(userRequestDTO.email());
         }
 
@@ -41,7 +45,7 @@ public class AdminService {
                 .build();
         repository.save(user);
 
-        if (userRequestDTO.role() == RoleUser.ANALYST){
+        if (userRequestDTO.role() == RoleUser.ANALYST) {
             AnalystCoverage coverage = AnalystCoverage.builder()
                     .user(user)
                     .states(new ArrayList<>())
@@ -50,5 +54,24 @@ public class AdminService {
         }
 
         return new UserResponseDTO(user);
+    }
+
+    @Transactional
+    public AnalystCoverageResponseDTO updateCoverage(Long userId, UpdateCoverageRequestDTO coverageRequestDTO) {
+        //Buscar o usuário pelo ID
+        User user = repository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException());
+
+        if (user.getRole() != RoleUser.ANALYST){
+            throw new InvalidOperationException();
+        }
+
+        //Se for analista, consulta no banco
+        AnalystCoverage coverage = coverageRepository.findByUser(user)
+                .orElseThrow(() -> new ResourceNotFoundException());
+
+        coverage.setStates(coverageRequestDTO.states());
+        coverageRepository.save(coverage);
+        return new AnalystCoverageResponseDTO(coverage);
     }
 }
