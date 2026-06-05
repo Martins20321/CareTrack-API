@@ -20,5 +20,5 @@ public class StepThreeData {
     private Priority priority;
     private LocalDate preferredDate;
     private BigDecimal estimatedValue;
-    private boolean termsAccepted;
+    private Boolean termsAccepted;
 }
