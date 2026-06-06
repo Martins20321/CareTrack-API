@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -69,7 +68,7 @@ public class AdminService {
 
         //Se for analista, consulta no banco
         AnalystCoverage coverage = coverageRepository.findByUser(user)
-                .orElseThrow(() -> new ResourceNotFoundException("Coverage not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Analyst not found"));
 
         coverage.setStates(coverageRequestDTO.states());
         coverageRepository.save(coverage);

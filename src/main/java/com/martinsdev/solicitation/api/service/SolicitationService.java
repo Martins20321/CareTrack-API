@@ -22,7 +22,7 @@ public class SolicitationService {
 
     private final SolicitationRepository repository;
 
-    //Criação de rescunho/DRAFT
+    //Criação de rascunho/DRAFT
     @Transactional
     public SolicitationResponseDTO create(User client) {
         Solicitation solicitation = Solicitation.builder()
@@ -46,7 +46,7 @@ public class SolicitationService {
             throw new UnauthorizedException();
         }
 
-        //Verificando se está com status DRAFT
+        //Verificando se está com status DRAFT/Step anterior
         if (solicitationSt1.getStatus() != StatusSolicitation.DRAFT){
             throw new InvalidOperationException("Solicitation can only be edited when status is DRAFT");
         }
