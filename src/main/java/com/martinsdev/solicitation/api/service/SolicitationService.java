@@ -175,7 +175,7 @@ public class SolicitationService {
             throw new InvalidOperationException("Terms must be accepted to submit the solicitation");
         }
 
-        solicitationSub.setStatus(StatusSolicitation.SUBMITTED);
+        solicitationSub.setStatus(StatusSolicitation.SUBMITTED); //Não pode mais alterar
         solicitationSub.setUpdatedAt(LocalDateTime.now());
         solicitationSub.setSubmittedAt(LocalDateTime.now());
 
