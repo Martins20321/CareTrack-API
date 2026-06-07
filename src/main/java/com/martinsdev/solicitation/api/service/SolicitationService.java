@@ -65,6 +65,7 @@ public class SolicitationService {
 
         solicitationSt1.setStepOneData(stepOne);
         solicitationSt1.setCurrentStep(1);
+        solicitationSt1.setUpdatedAt(LocalDateTime.now());
 
         repository.save(solicitationSt1);
         return new SolicitationResponseDTO(solicitationSt1);
