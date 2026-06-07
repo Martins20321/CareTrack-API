@@ -2,6 +2,7 @@ package com.martinsdev.solicitation.api.controller;
 
 import com.martinsdev.solicitation.api.dto.SolicitationResponseDTO;
 import com.martinsdev.solicitation.api.dto.StepOneRequestDTO;
+import com.martinsdev.solicitation.api.dto.StepThreeRequestDTO;
 import com.martinsdev.solicitation.api.dto.StepTwoRequestDTO;
 import com.martinsdev.solicitation.api.model.Solicitation;
 import com.martinsdev.solicitation.api.model.User;
@@ -39,5 +40,11 @@ public class SolicitationController {
     public ResponseEntity<SolicitationResponseDTO> saveStep2(@PathVariable Long id, @RequestBody @Valid StepTwoRequestDTO twoRequestDTO, @AuthenticationPrincipal User client) {
         SolicitationResponseDTO solicitationSt2 = service.saveStep2(id, twoRequestDTO, client);
         return ResponseEntity.ok(solicitationSt2);
+    }
+
+    @PutMapping("/{id}/step3")
+    public ResponseEntity<SolicitationResponseDTO> saveStep3(@PathVariable Long id, @RequestBody @Valid StepThreeRequestDTO threeRequestDTO, @AuthenticationPrincipal User client){
+        SolicitationResponseDTO solicitationSt3 = service.saveStep3(id, threeRequestDTO, client);
+        return ResponseEntity.ok(solicitationSt3);
     }
 }
