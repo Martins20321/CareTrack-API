@@ -35,6 +35,7 @@ public class SolicitationService {
         return new SolicitationResponseDTO(solicitation);
     }
 
+    //Atualização da solicitação no step1
     @Transactional
     public SolicitationResponseDTO saveStep1(Long id, StepOneRequestDTO oneRequestDTO, User client) {
         //Buscando a solicitação no banco
