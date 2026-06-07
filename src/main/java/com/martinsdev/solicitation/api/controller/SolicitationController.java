@@ -4,7 +4,6 @@ import com.martinsdev.solicitation.api.dto.SolicitationResponseDTO;
 import com.martinsdev.solicitation.api.dto.StepOneRequestDTO;
 import com.martinsdev.solicitation.api.dto.StepThreeRequestDTO;
 import com.martinsdev.solicitation.api.dto.StepTwoRequestDTO;
-import com.martinsdev.solicitation.api.model.Solicitation;
 import com.martinsdev.solicitation.api.model.User;
 import com.martinsdev.solicitation.api.service.SolicitationService;
 import jakarta.validation.Valid;

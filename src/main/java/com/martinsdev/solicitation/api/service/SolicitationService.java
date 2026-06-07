@@ -141,4 +141,45 @@ public class SolicitationService {
         repository.save(solicitationSt3);
         return new SolicitationResponseDTO(solicitationSt3);
     }
+
+    //Enviando para análise(Submitted)
+    @Transactional
+    public SolicitationResponseDTO submit(Long id, User client) {
+
+        //Buscando no banco
+        Solicitation solicitationSub = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Solicitation not found by id: " + id));
+
+        if (!solicitationSub.getClient().getId().equals(client.getId())) {
+            throw new UnauthorizedException();
+        }
+
+        if (solicitationSub.getStatus() != StatusSolicitation.DRAFT) {
+            throw new InvalidOperationException("Solicitation can only be submitted when status is DRAFT");
+        }
+
+        //Verificação dos campos necessários, com validação para os atributos essenciais, evitando o hibernate entregar um objeto com campos nulos
+        if (solicitationSub.getStepOneData() == null || solicitationSub.getStepOneData().getServiceType() == null){
+            throw new InvalidOperationException("Step 1 is not complete");
+        }
+
+        if (solicitationSub.getStepTwoData() == null || solicitationSub.getStepTwoData().getCep() == null){
+            throw new InvalidOperationException("Step 2 is not complete");
+        }
+
+        if (solicitationSub.getStepThreeData() == null || solicitationSub.getStepThreeData().getPriority() == null){
+            throw new InvalidOperationException("Step 3 is not complete");
+        }
+
+        if (!solicitationSub.getStepThreeData().getTermsAccepted()){
+            throw new InvalidOperationException("Terms must be accepted to submit the solicitation");
+        }
+
+        solicitationSub.setStatus(StatusSolicitation.SUBMITTED);
+        solicitationSub.setUpdatedAt(LocalDateTime.now());
+        solicitationSub.setSubmittedAt(LocalDateTime.now());
+
+        repository.save(solicitationSub);
+        return new SolicitationResponseDTO(solicitationSub);
+    }
 }

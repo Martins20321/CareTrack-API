@@ -9,9 +9,10 @@ public record SolicitationResponseDTO(Long id,
                                       StatusSolicitation status,
                                       Integer currentStep,
                                       LocalDateTime createdAt,
-                                      LocalDateTime updateAt) {
+                                      LocalDateTime updateAt,
+                                      LocalDateTime submittedAt) {
 
     public SolicitationResponseDTO(Solicitation solicitation) {
-        this(solicitation.getId(), solicitation.getStatus(), solicitation.getCurrentStep(), solicitation.getCreatedAt(), solicitation.getUpdatedAt());
+        this(solicitation.getId(), solicitation.getStatus(), solicitation.getCurrentStep(), solicitation.getCreatedAt(), solicitation.getUpdatedAt(), solicitation.getSubmittedAt());
     }
 }
