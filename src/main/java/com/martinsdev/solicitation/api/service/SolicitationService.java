@@ -1,9 +1,6 @@
 package com.martinsdev.solicitation.api.service;
 
-import com.martinsdev.solicitation.api.dto.SolicitationResponseDTO;
-import com.martinsdev.solicitation.api.dto.StepOneRequestDTO;
-import com.martinsdev.solicitation.api.dto.StepTwoRequestDTO;
-import com.martinsdev.solicitation.api.dto.ViaCepResponseDTO;
+import com.martinsdev.solicitation.api.dto.*;
 import com.martinsdev.solicitation.api.infra.client.ViaCepClient;
 import com.martinsdev.solicitation.api.infra.exception.InvalidOperationException;
 import com.martinsdev.solicitation.api.infra.exception.ResourceNotFoundException;
@@ -11,13 +8,16 @@ import com.martinsdev.solicitation.api.infra.exception.UnauthorizedException;
 import com.martinsdev.solicitation.api.model.Solicitation;
 import com.martinsdev.solicitation.api.model.User;
 import com.martinsdev.solicitation.api.model.embedded.StepOneData;
+import com.martinsdev.solicitation.api.model.embedded.StepThreeData;
 import com.martinsdev.solicitation.api.model.embedded.StepTwoData;
+import com.martinsdev.solicitation.api.model.enums.Priority;
 import com.martinsdev.solicitation.api.model.enums.StatusSolicitation;
 import com.martinsdev.solicitation.api.repository.SolicitationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Service
@@ -79,11 +79,11 @@ public class SolicitationService {
                 .orElseThrow(() -> new ResourceNotFoundException("Solicitation not found by id: " + id));
 
         //Verificando se é o mesmo cliente
-        if (!solicitation.getClient().getId().equals(client.getId())){
+        if (!solicitation.getClient().getId().equals(client.getId())) {
             throw new UnauthorizedException();
         }
 
-        if (solicitation.getStatus() != StatusSolicitation.DRAFT){
+        if (solicitation.getStatus() != StatusSolicitation.DRAFT) {
             throw new InvalidOperationException("Solicitation can only be edited when status is DRAFT");
         }
 
@@ -106,5 +106,39 @@ public class SolicitationService {
 
         repository.save(solicitation);
         return new SolicitationResponseDTO(solicitation);
+    }
+
+    //Atualização da solicitação com step3
+    @Transactional
+    public SolicitationResponseDTO saveStep3(Long id, StepThreeRequestDTO threeRequestDTO, User client) {
+        //Buscando solicitação no banco
+        Solicitation solicitationSt3 = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Solicitation not found by id: " + id));
+
+        if (!solicitationSt3.getClient().getId().equals(client.getId())) {
+            throw new UnauthorizedException();
+        }
+
+        if (solicitationSt3.getStatus() != StatusSolicitation.DRAFT) {
+            throw new InvalidOperationException("Solicitation can only be edited when status is DRAFT");
+        }
+
+        StepThreeData stepThree = StepThreeData.builder()
+                .priority(threeRequestDTO.priority())
+                .preferredDate(threeRequestDTO.preferredDate())
+                .estimatedValue(threeRequestDTO.estimatedValue())
+                .termsAccepted(threeRequestDTO.termsAccepted())
+                .build();
+
+        if (stepThree.getPriority() == Priority.HIGH && stepThree.getEstimatedValue().compareTo(BigDecimal.valueOf(100)) < 0) {
+            throw new InvalidOperationException("If the priority is High, the estimated minimum value is 100.0!");
+        }
+
+        solicitationSt3.setStepThreeData(stepThree);
+        solicitationSt3.setCurrentStep(3);
+        solicitationSt3.setUpdatedAt(LocalDateTime.now());
+
+        repository.save(solicitationSt3);
+        return new SolicitationResponseDTO(solicitationSt3);
     }
 }

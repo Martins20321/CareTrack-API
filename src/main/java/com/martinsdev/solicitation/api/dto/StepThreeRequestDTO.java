@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public record StepThreeRequestDTO(@NotNull(message = "Priority is required") Priority priority,
-                                  @NotNull(message = "Preferred Date is required") @Future LocalDate preferredDate,
+                                  @NotNull(message = "Preferred Date is required") @Future(message = "Only future dates are accepted") LocalDate preferredDate,
                                   @NotNull(message = "Estimated Value is required") @DecimalMin("0.0") BigDecimal estimatedValue,
                                   @NotNull(message = "Terms Accepted is required") Boolean termsAccepted) {
 }
