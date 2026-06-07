@@ -46,4 +46,10 @@ public class SolicitationController {
         SolicitationResponseDTO solicitationSt3 = service.saveStep3(id, threeRequestDTO, client);
         return ResponseEntity.ok(solicitationSt3);
     }
+
+    @PostMapping("/{id}/submit")
+    public ResponseEntity<SolicitationResponseDTO> submit(@PathVariable Long id, @AuthenticationPrincipal User client){
+        SolicitationResponseDTO solicitationSub = service.submit(id,client);
+        return ResponseEntity.ok(solicitationSub);
+    }
 }
