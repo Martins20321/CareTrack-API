@@ -28,6 +28,7 @@ public class ViaCepClient {
                 throw new InvalidCepException(cep);
             }
             return cepResponseDTO;
+            //Faço ela ser lancada antes da Exceção Genérica.
         } catch (InvalidCepException e) {
             throw e;
         } catch (Exception e) {
