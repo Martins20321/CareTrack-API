@@ -35,7 +35,46 @@ public class AnalystService {
 
         //Pega as solicitações que estão dentro da lista de estados que o analista abrange
         List<Solicitation> solicitationList = solicitationRepository.findByStepTwoData_StateIn(states);
+
         return solicitationList.stream().map(SolicitationResponseDTO::new).toList();
+    }
+
+    public SolicitationResponseDTO getSolicitationById(Long id, User analyst) {
+        Solicitation solicitation = solicitationRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Solicitation not found by id: " + id));
+
+        AnalystCoverage coverage = repository.findByUser(analyst)
+                .orElseThrow(() -> new ResourceNotFoundException("Analyst not found"));
+
+        if (!coverage.getStates().contains(solicitation.getStepTwoData().getState())){
+            throw new UnauthorizedException();
+        }
+
+        return new SolicitationResponseDTO(solicitation);
+    }
+
+    public SolicitationResponseDTO start(Long id, User analyst) {
+        //Buscando solicitação
+        Solicitation solicitation = solicitationRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Solicitation not found by id: " + id));
+
+        AnalystCoverage coverage = repository.findByUser(analyst)
+                .orElseThrow(() -> new ResourceNotFoundException("Analyst not found"));
+
+        //Verifica se o state está no coverage do analyst
+        if (!coverage.getStates().contains(solicitation.getStepTwoData().getState())) {
+            throw new UnauthorizedException();
+        }
+
+        if (solicitation.getStatus() != StatusSolicitation.SUBMITTED) {
+            throw new InvalidOperationException("This operation can only be performed with the status 'SUBMITTED'");
+        }
+
+        solicitation.setStatus(StatusSolicitation.IN_REVIEW);
+        solicitation.setUpdatedAt(LocalDateTime.now());
+        solicitationRepository.save(solicitation);
+
+        return new SolicitationResponseDTO(solicitation);
     }
 
     public SolicitationResponseDTO decide(Long id, DecisionRequestDTO decisionRequestDTO, User analyst) {
@@ -61,7 +100,7 @@ public class AnalystService {
         }
 
         solicitation.setAnalyzedAt(LocalDateTime.now());
-        solicitation.setAnalyzedBy(coverage.getId());
+        solicitation.setAnalyzedBy(analyst.getId());
         solicitation.setAnalysisComment(decisionRequestDTO.comment());
 
         solicitationRepository.save(solicitation);
