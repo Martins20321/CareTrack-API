@@ -28,6 +28,8 @@ public class ViaCepClient {
                 throw new InvalidCepException(cep);
             }
             return cepResponseDTO;
+        } catch (InvalidCepException e) {
+            throw e;
         } catch (Exception e) {
             throw new ExternalServiceException("ViaCEP service unavailable. Please try again later");
         }
