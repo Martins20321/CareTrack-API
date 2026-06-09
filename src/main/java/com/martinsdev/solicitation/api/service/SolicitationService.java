@@ -26,6 +26,7 @@ public class SolicitationService {
 
     private final SolicitationRepository repository;
     private final ViaCepClient cepClient;
+    private final SolicitationIndexService solicitationIndexService;
 
     //Criação de rascunho/DRAFT
     @Transactional
@@ -37,6 +38,8 @@ public class SolicitationService {
                 .createdAt(LocalDateTime.now())
                 .build();
         repository.save(solicitation);
+        solicitationIndexService.index(solicitation);
+
         return new SolicitationResponseDTO(solicitation);
     }
 
@@ -68,6 +71,8 @@ public class SolicitationService {
         solicitationSt1.setUpdatedAt(LocalDateTime.now());
 
         repository.save(solicitationSt1);
+        solicitationIndexService.index(solicitationSt1);
+
         return new SolicitationResponseDTO(solicitationSt1);
     }
 
@@ -75,15 +80,15 @@ public class SolicitationService {
     @Transactional
     public SolicitationResponseDTO saveStep2(Long id, StepTwoRequestDTO twoRequestDTO, User client) {
         //Buscando solicitação no banco
-        Solicitation solicitation = repository.findById(id)
+        Solicitation solicitationSt2 = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Solicitation not found by id: " + id));
 
         //Verificando se é o mesmo cliente
-        if (!solicitation.getClient().getId().equals(client.getId())) {
+        if (!solicitationSt2.getClient().getId().equals(client.getId())) {
             throw new UnauthorizedException();
         }
 
-        if (solicitation.getStatus() != StatusSolicitation.DRAFT) {
+        if (solicitationSt2.getStatus() != StatusSolicitation.DRAFT) {
             throw new InvalidOperationException("Solicitation can only be edited when status is DRAFT");
         }
 
@@ -100,12 +105,14 @@ public class SolicitationService {
                 .state(addressByCep.state())
                 .build();
 
-        solicitation.setStepTwoData(stepTwo);
-        solicitation.setCurrentStep(2);
-        solicitation.setUpdatedAt(LocalDateTime.now());
+        solicitationSt2.setStepTwoData(stepTwo);
+        solicitationSt2.setCurrentStep(2);
+        solicitationSt2.setUpdatedAt(LocalDateTime.now());
 
-        repository.save(solicitation);
-        return new SolicitationResponseDTO(solicitation);
+        repository.save(solicitationSt2);
+        solicitationIndexService.index(solicitationSt2);
+
+        return new SolicitationResponseDTO(solicitationSt2);
     }
 
     //Atualização da solicitação com step3
@@ -139,6 +146,8 @@ public class SolicitationService {
         solicitationSt3.setUpdatedAt(LocalDateTime.now());
 
         repository.save(solicitationSt3);
+        solicitationIndexService.index(solicitationSt3);
+
         return new SolicitationResponseDTO(solicitationSt3);
     }
 
@@ -180,6 +189,8 @@ public class SolicitationService {
         solicitationSub.setSubmittedAt(LocalDateTime.now());
 
         repository.save(solicitationSub);
+        solicitationIndexService.index(solicitationSub);
+
         return new SolicitationResponseDTO(solicitationSub);
     }
 }

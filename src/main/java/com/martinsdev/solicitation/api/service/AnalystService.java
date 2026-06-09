@@ -24,6 +24,7 @@ public class AnalystService {
 
     private final AnalystCoverageRepository repository;
     private final SolicitationRepository solicitationRepository;
+    private final SolicitationIndexService solicitationIndexService;
 
     public List<SolicitationResponseDTO> getSolicitations(User analyst) {
         //Busca o analyst no banco pelo usuário
@@ -72,7 +73,9 @@ public class AnalystService {
 
         solicitation.setStatus(StatusSolicitation.IN_REVIEW);
         solicitation.setUpdatedAt(LocalDateTime.now());
+
         solicitationRepository.save(solicitation);
+        solicitationIndexService.index(solicitation);
 
         return new SolicitationResponseDTO(solicitation);
     }
@@ -104,6 +107,8 @@ public class AnalystService {
         solicitation.setAnalysisComment(decisionRequestDTO.comment());
 
         solicitationRepository.save(solicitation);
+        solicitationIndexService.index(solicitation);
+
         return new SolicitationResponseDTO(solicitation);
     }
 
