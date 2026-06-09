@@ -2,10 +2,14 @@ package com.martinsdev.solicitation.api.controller;
 
 import com.martinsdev.solicitation.api.dto.DecisionRequestDTO;
 import com.martinsdev.solicitation.api.dto.SolicitationResponseDTO;
+import com.martinsdev.solicitation.api.dto.SolicitationSearchRequestDTO;
 import com.martinsdev.solicitation.api.model.User;
+import com.martinsdev.solicitation.api.model.document.SolicitationDocument;
 import com.martinsdev.solicitation.api.service.AnalystService;
+import com.martinsdev.solicitation.api.service.SolicitationSearchService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +22,7 @@ import java.util.List;
 public class AnalystController {
 
     private final AnalystService service;
+    private final SolicitationSearchService searchService;
 
     @GetMapping
     public ResponseEntity<List<SolicitationResponseDTO>> getSolicitations(@AuthenticationPrincipal User analyst) {
@@ -37,5 +42,10 @@ public class AnalystController {
     @PostMapping("/{id}/decide")
     public ResponseEntity<SolicitationResponseDTO> decide(@PathVariable Long id, @RequestBody @Valid DecisionRequestDTO decisionRequestDTO, @AuthenticationPrincipal User analyst) {
         return ResponseEntity.ok(service.decide(id, decisionRequestDTO, analyst));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Page<SolicitationDocument>> search(@ModelAttribute SolicitationSearchRequestDTO searchRequestDTO, @AuthenticationPrincipal User client) {
+        return ResponseEntity.ok(searchService.search(searchRequestDTO,client));
     }
 }
