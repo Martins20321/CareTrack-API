@@ -8,6 +8,7 @@ import com.martinsdev.solicitation.api.model.User;
 import com.martinsdev.solicitation.api.model.document.SolicitationDocument;
 import com.martinsdev.solicitation.api.service.AnalystService;
 import com.martinsdev.solicitation.api.service.SolicitationSearchService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -20,6 +21,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/analyst/solicitations")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "bearer-key")
 public class AnalystController {
 
     private final AnalystService service;
