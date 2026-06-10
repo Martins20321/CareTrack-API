@@ -4,6 +4,7 @@ import com.martinsdev.solicitation.api.dto.AnalystCoverageResponseDTO;
 import com.martinsdev.solicitation.api.dto.CreateUserRequestDTO;
 import com.martinsdev.solicitation.api.dto.UpdateCoverageRequestDTO;
 import com.martinsdev.solicitation.api.dto.UserResponseDTO;
+import com.martinsdev.solicitation.api.infra.aop.Audit;
 import com.martinsdev.solicitation.api.service.AdminService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ public class AdminController {
 
     private final AdminService service;
 
+    @Audit(action = "CREATE_USER")
     @PostMapping("/users")
     public ResponseEntity<UserResponseDTO> createUser(@RequestBody @Valid CreateUserRequestDTO userRequestDTO) {
         UserResponseDTO user = service.createUser(userRequestDTO);

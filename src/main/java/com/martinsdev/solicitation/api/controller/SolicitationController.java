@@ -4,6 +4,7 @@ import com.martinsdev.solicitation.api.dto.SolicitationResponseDTO;
 import com.martinsdev.solicitation.api.dto.StepOneRequestDTO;
 import com.martinsdev.solicitation.api.dto.StepThreeRequestDTO;
 import com.martinsdev.solicitation.api.dto.StepTwoRequestDTO;
+import com.martinsdev.solicitation.api.infra.aop.Audit;
 import com.martinsdev.solicitation.api.model.User;
 import com.martinsdev.solicitation.api.service.SolicitationService;
 import jakarta.validation.Valid;
@@ -47,6 +48,7 @@ public class SolicitationController {
         return ResponseEntity.ok(solicitationSt3);
     }
 
+    @Audit(action = "SUBMIT_SOLICITATION")
     @PostMapping("/{id}/submit")
     public ResponseEntity<SolicitationResponseDTO> submit(@PathVariable Long id, @AuthenticationPrincipal User client){
         SolicitationResponseDTO solicitationSub = service.submit(id,client);

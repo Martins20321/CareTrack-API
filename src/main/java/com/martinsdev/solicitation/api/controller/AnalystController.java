@@ -3,6 +3,7 @@ package com.martinsdev.solicitation.api.controller;
 import com.martinsdev.solicitation.api.dto.DecisionRequestDTO;
 import com.martinsdev.solicitation.api.dto.SolicitationResponseDTO;
 import com.martinsdev.solicitation.api.dto.SolicitationSearchRequestDTO;
+import com.martinsdev.solicitation.api.infra.aop.Audit;
 import com.martinsdev.solicitation.api.model.User;
 import com.martinsdev.solicitation.api.model.document.SolicitationDocument;
 import com.martinsdev.solicitation.api.service.AnalystService;
@@ -39,6 +40,7 @@ public class AnalystController {
         return ResponseEntity.ok(service.start(id, analyst));
     }
 
+    @Audit(action = "DECIDE_SOLICITATION")
     @PostMapping("/{id}/decide")
     public ResponseEntity<SolicitationResponseDTO> decide(@PathVariable Long id, @RequestBody @Valid DecisionRequestDTO decisionRequestDTO, @AuthenticationPrincipal User analyst) {
         return ResponseEntity.ok(service.decide(id, decisionRequestDTO, analyst));
