@@ -1,9 +1,6 @@
 package com.martinsdev.solicitation.api.controller;
 
-import com.martinsdev.solicitation.api.dto.SolicitationResponseDTO;
-import com.martinsdev.solicitation.api.dto.StepOneRequestDTO;
-import com.martinsdev.solicitation.api.dto.StepThreeRequestDTO;
-import com.martinsdev.solicitation.api.dto.StepTwoRequestDTO;
+import com.martinsdev.solicitation.api.dto.*;
 import com.martinsdev.solicitation.api.infra.aop.Audit;
 import com.martinsdev.solicitation.api.model.User;
 import com.martinsdev.solicitation.api.service.SolicitationService;
@@ -16,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/solicitations")
@@ -24,6 +22,16 @@ import java.net.URI;
 public class SolicitationController {
 
     private final SolicitationService service;
+
+    @GetMapping
+    public ResponseEntity<List<SolicitationDetailResponseDTO>> findAllByClient(@AuthenticationPrincipal User client) {
+        return ResponseEntity.ok(service.findAllByClient(client));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<SolicitationDetailResponseDTO> findById(@PathVariable Long id,@AuthenticationPrincipal User client) {
+        return ResponseEntity.ok(service.findById(id, client));
+    }
 
     @PostMapping
     public ResponseEntity<SolicitationResponseDTO> createDraft(@AuthenticationPrincipal User client) {
