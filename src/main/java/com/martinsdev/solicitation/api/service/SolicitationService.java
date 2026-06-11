@@ -46,19 +46,9 @@ public class SolicitationService {
     //Atualização da solicitação no step1
     @Transactional
     public SolicitationResponseDTO saveStep1(Long id, StepOneRequestDTO oneRequestDTO, User client) {
-        //Buscando a solicitação no banco
-        Solicitation solicitationSt1 = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Solicitation not found by id: " + id));
 
-        //Verificando se é o mesmo cliente
-        if (!solicitationSt1.getClient().getId().equals(client.getId())) {
-            throw new UnauthorizedException();
-        }
-
-        //Verificando se está com status DRAFT/Step anterior
-        if (solicitationSt1.getStatus() != StatusSolicitation.DRAFT) {
-            throw new InvalidOperationException("Solicitation can only be edited when status is DRAFT");
-        }
+        //Método contendo todas as verificações
+        Solicitation solicitationSt1 = findAndValidateDraftOwnership(id, client);
 
         StepOneData stepOne = StepOneData.builder()
                 .serviceType(oneRequestDTO.serviceType())
@@ -79,18 +69,9 @@ public class SolicitationService {
     //Atualização da solicitação com step2
     @Transactional
     public SolicitationResponseDTO saveStep2(Long id, StepTwoRequestDTO twoRequestDTO, User client) {
-        //Buscando solicitação no banco
-        Solicitation solicitationSt2 = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Solicitation not found by id: " + id));
 
-        //Verificando se é o mesmo cliente
-        if (!solicitationSt2.getClient().getId().equals(client.getId())) {
-            throw new UnauthorizedException();
-        }
-
-        if (solicitationSt2.getStatus() != StatusSolicitation.DRAFT) {
-            throw new InvalidOperationException("Solicitation can only be edited when status is DRAFT");
-        }
+        //Método contendo todas as verificações
+        Solicitation solicitationSt2 = findAndValidateDraftOwnership(id, client);
 
         //O ViaCep devolve os campos
         ViaCepResponseDTO addressByCep = cepClient.findAddressByCep(twoRequestDTO.cep());
@@ -118,17 +99,9 @@ public class SolicitationService {
     //Atualização da solicitação com step3
     @Transactional
     public SolicitationResponseDTO saveStep3(Long id, StepThreeRequestDTO threeRequestDTO, User client) {
-        //Buscando solicitação no banco
-        Solicitation solicitationSt3 = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Solicitation not found by id: " + id));
 
-        if (!solicitationSt3.getClient().getId().equals(client.getId())) {
-            throw new UnauthorizedException();
-        }
-
-        if (solicitationSt3.getStatus() != StatusSolicitation.DRAFT) {
-            throw new InvalidOperationException("Solicitation can only be edited when status is DRAFT");
-        }
+        //Método contendo todas as verificações
+        Solicitation solicitationSt3 =findAndValidateDraftOwnership(id, client);
 
         StepThreeData stepThree = StepThreeData.builder()
                 .priority(threeRequestDTO.priority())
@@ -155,32 +128,23 @@ public class SolicitationService {
     @Transactional
     public SolicitationResponseDTO submit(Long id, User client) {
 
-        //Buscando no banco
-        Solicitation solicitationSub = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Solicitation not found by id: " + id));
-
-        if (!solicitationSub.getClient().getId().equals(client.getId())) {
-            throw new UnauthorizedException();
-        }
-
-        if (solicitationSub.getStatus() != StatusSolicitation.DRAFT) {
-            throw new InvalidOperationException("Solicitation can only be submitted when status is DRAFT");
-        }
+        //Método contendo todas as verificações
+        Solicitation solicitationSub = findAndValidateDraftOwnership(id, client);
 
         //Verificação dos campos necessários, com validação para os atributos essenciais, evitando o hibernate entregar um objeto com campos nulos
-        if (solicitationSub.getStepOneData() == null || solicitationSub.getStepOneData().getServiceType() == null){
+        if (solicitationSub.getStepOneData() == null || solicitationSub.getStepOneData().getServiceType() == null) {
             throw new InvalidOperationException("Step 1 is not complete");
         }
 
-        if (solicitationSub.getStepTwoData() == null || solicitationSub.getStepTwoData().getCep() == null){
+        if (solicitationSub.getStepTwoData() == null || solicitationSub.getStepTwoData().getCep() == null) {
             throw new InvalidOperationException("Step 2 is not complete");
         }
 
-        if (solicitationSub.getStepThreeData() == null || solicitationSub.getStepThreeData().getPriority() == null){
+        if (solicitationSub.getStepThreeData() == null || solicitationSub.getStepThreeData().getPriority() == null) {
             throw new InvalidOperationException("Step 3 is not complete");
         }
 
-        if (!solicitationSub.getStepThreeData().getTermsAccepted()){
+        if (!solicitationSub.getStepThreeData().getTermsAccepted()) {
             throw new InvalidOperationException("Terms must be accepted to submit the solicitation");
         }
 
@@ -192,5 +156,23 @@ public class SolicitationService {
         solicitationIndexService.index(solicitationSub);
 
         return new SolicitationResponseDTO(solicitationSub);
+    }
+
+    private Solicitation findAndValidateDraftOwnership(Long id, User client) {
+        //Buscando a solicitação no banco
+        Solicitation solicitation = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Solicitation not found by id: " + id));
+
+        //Verificando se é o mesmo cliente
+        if (!solicitation.getClient().getId().equals(client.getId())) {
+            throw new UnauthorizedException();
+        }
+
+        //Verificando se está com status DRAFT/Step anterior
+        if (solicitation.getStatus() != StatusSolicitation.DRAFT) {
+            throw new InvalidOperationException("Solicitation can only be edited when status is DRAFT");
+        }
+
+        return solicitation;
     }
 }
