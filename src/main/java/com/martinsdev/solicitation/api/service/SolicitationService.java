@@ -132,21 +132,7 @@ public class SolicitationService {
         Solicitation solicitationSub = findAndValidateDraftOwnership(id, client);
 
         //Verificação dos campos necessários, com validação para os atributos essenciais, evitando o hibernate entregar um objeto com campos nulos
-        if (solicitationSub.getStepOneData() == null || solicitationSub.getStepOneData().getServiceType() == null) {
-            throw new InvalidOperationException("Step 1 is not complete");
-        }
-
-        if (solicitationSub.getStepTwoData() == null || solicitationSub.getStepTwoData().getCep() == null) {
-            throw new InvalidOperationException("Step 2 is not complete");
-        }
-
-        if (solicitationSub.getStepThreeData() == null || solicitationSub.getStepThreeData().getPriority() == null) {
-            throw new InvalidOperationException("Step 3 is not complete");
-        }
-
-        if (!solicitationSub.getStepThreeData().getTermsAccepted()) {
-            throw new InvalidOperationException("Terms must be accepted to submit the solicitation");
-        }
+        validateStepsComplete(solicitationSub);
 
         solicitationSub.setStatus(StatusSolicitation.SUBMITTED); //Não pode mais alterar
         solicitationSub.setUpdatedAt(LocalDateTime.now());
@@ -174,5 +160,23 @@ public class SolicitationService {
         }
 
         return solicitation;
+    }
+
+    private void validateStepsComplete(Solicitation solicitation){
+        if (solicitation.getStepOneData() == null || solicitation.getStepOneData().getServiceType() == null) {
+            throw new InvalidOperationException("Step 1 is not complete");
+        }
+
+        if (solicitation.getStepTwoData() == null || solicitation.getStepTwoData().getCep() == null) {
+            throw new InvalidOperationException("Step 2 is not complete");
+        }
+
+        if (solicitation.getStepThreeData() == null || solicitation.getStepThreeData().getPriority() == null) {
+            throw new InvalidOperationException("Step 3 is not complete");
+        }
+
+        if (!solicitation.getStepThreeData().getTermsAccepted()) {
+            throw new InvalidOperationException("Terms must be accepted to submit the solicitation");
+        }
     }
 }
