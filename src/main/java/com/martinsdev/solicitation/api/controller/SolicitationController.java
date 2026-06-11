@@ -45,15 +45,15 @@ public class SolicitationController {
     }
 
     @PutMapping("/{id}/step3")
-    public ResponseEntity<SolicitationResponseDTO> saveStep3(@PathVariable Long id, @RequestBody @Valid StepThreeRequestDTO threeRequestDTO, @AuthenticationPrincipal User client){
+    public ResponseEntity<SolicitationResponseDTO> saveStep3(@PathVariable Long id, @RequestBody @Valid StepThreeRequestDTO threeRequestDTO, @AuthenticationPrincipal User client) {
         SolicitationResponseDTO solicitationSt3 = service.saveStep3(id, threeRequestDTO, client);
         return ResponseEntity.ok(solicitationSt3);
     }
 
     @Audit(action = "SUBMIT_SOLICITATION")
     @PostMapping("/{id}/submit")
-    public ResponseEntity<SolicitationResponseDTO> submit(@PathVariable Long id, @AuthenticationPrincipal User client){
-        SolicitationResponseDTO solicitationSub = service.submit(id,client);
+    public ResponseEntity<SolicitationResponseDTO> submit(@PathVariable Long id, @AuthenticationPrincipal User client) {
+        SolicitationResponseDTO solicitationSub = service.submit(id, client);
         return ResponseEntity.ok(solicitationSub);
     }
 }

@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -41,6 +42,22 @@ public class SolicitationService {
         solicitationIndexService.index(solicitation);
 
         return new SolicitationResponseDTO(solicitation);
+    }
+
+    public List<SolicitationDetailResponseDTO> findAllByClient(User client) {
+        return repository.findByClient(client)
+                .stream().map(SolicitationDetailResponseDTO::new).toList();
+    }
+
+    public SolicitationDetailResponseDTO findById(Long id, User client) {
+         Solicitation solicitation = repository.findById(id)
+                 .orElseThrow(() -> new ResourceNotFoundException("Solicitation not found by id: " + id));
+
+         if (!solicitation.getClient().equals(solicitation.getClient().getId())){
+             throw new UnauthorizedException();
+         }
+
+         return new SolicitationDetailResponseDTO(solicitation);
     }
 
     //Atualização da solicitação no step1
@@ -101,7 +118,7 @@ public class SolicitationService {
     public SolicitationResponseDTO saveStep3(Long id, StepThreeRequestDTO threeRequestDTO, User client) {
 
         //Método contendo todas as verificações
-        Solicitation solicitationSt3 =findAndValidateDraftOwnership(id, client);
+        Solicitation solicitationSt3 = findAndValidateDraftOwnership(id, client);
 
         StepThreeData stepThree = StepThreeData.builder()
                 .priority(threeRequestDTO.priority())
@@ -162,7 +179,7 @@ public class SolicitationService {
         return solicitation;
     }
 
-    private void validateStepsComplete(Solicitation solicitation){
+    private void validateStepsComplete(Solicitation solicitation) {
         if (solicitation.getStepOneData() == null || solicitation.getStepOneData().getServiceType() == null) {
             throw new InvalidOperationException("Step 1 is not complete");
         }
