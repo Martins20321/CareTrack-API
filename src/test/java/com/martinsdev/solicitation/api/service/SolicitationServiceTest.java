@@ -156,7 +156,7 @@ class SolicitationServiceTest {
 
         //ASSERT + ACT
         InvalidOperationException exception = Assertions.assertThrows(InvalidOperationException.class, () -> service.submit(solicitation.getId(), client));
-        Assertions.assertEquals("Solicitation can only be submitted when status is DRAFT", exception.getMessage());
+        Assertions.assertEquals("Solicitation can only be edited when status is DRAFT", exception.getMessage());
     }
 
     @Test
