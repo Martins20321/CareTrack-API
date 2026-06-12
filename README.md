@@ -269,7 +269,7 @@ GET  /analyst/solicitations/search             → Busca com filtros no Elastics
 
 **Busca com filtros:**
 ```
-GET /analyst/solicitations/search?q=instalação&status=SUBMITTED&state=SP&page=0&size=10
+GET /analyst/solicitations/search?q=equipamento&status=SUBMITTED&page=0&size=10
 ```
 
 ---
