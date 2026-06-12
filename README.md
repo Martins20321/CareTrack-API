@@ -9,7 +9,7 @@
 ![CI/CD](https://github.com/Martins20321/Solicitation-API-SEA/actions/workflows/ci-cd.yml/badge.svg)
 
 
-API REST para gerenciamento de solicitações de atendimento com controle de acesso por perfil (CLIENT, ANALYST, ADMIN).
+API REST desenvolvida como desafio técnico para a SEA Tecnologia, para gerenciamento de solicitações de atendimento com controle de acesso por perfil (CLIENT, ANALYST, ADMIN).
 
 ---
 
@@ -90,8 +90,8 @@ Crie o arquivo `.env` na raiz do projeto:
 ```env
 POSTGRES_DB=solicitation
 POSTGRES_USER=postgres
-POSTGRES_PASSWORD=solicitation@2026!
-JWT_SECRET=solicitationSecretKey@2026!SuperSegura
+POSTGRES_PASSWORD=solicitationsea@2026!
+JWT_SECRET=solicitationSecretKey@2026!
 ```
 
 ### 3. Suba os containers
@@ -182,7 +182,7 @@ POST /auth/login      → Autentica qualquer perfil
 ### Admin
 
 ```
-POST /admin/users                    → Cria usuário (ANALYST ou ADMIN)
+POST /admin/users                    → Cria usuário (CLIENT, ANALYST ou ADMIN)
 PUT  /admin/users/{id}/coverage      → Configura UFs do analista
 ```
 
@@ -302,7 +302,7 @@ ANALYST decide → status: APPROVED ou REJECTED
 
 **`AnalystCoverage` separado do `User`** — Single Responsibility: autenticação e cobertura geográfica são responsabilidades distintas.
 
-**`@Embeddable` para steps** — organização sem tabela extra. Os três steps ficam na mesma tabela `tb_solicitation` mas com código organizado por responsabilidade.
+**`@Embeddable` para steps** — organização sem tabela extra. Os três steps ficam na mesma tabela `tb_solicitation`, mas com código organizado por responsabilidade.
 
 **Builder Pattern** — construção explícita de objetos sem dependência da ordem dos parâmetros.
 
