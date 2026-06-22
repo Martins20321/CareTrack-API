@@ -1,4 +1,4 @@
-# Solicitation API SEA
+# CareTrack API 
 
 ![Version](https://img.shields.io/badge/version-1.0.0-blue?style=flat)
 ![Java](https://img.shields.io/badge/Java-21-orange)
@@ -6,10 +6,9 @@
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-blue)
 ![Elasticsearch](https://img.shields.io/badge/Elasticsearch-8.13-yellow)
 ![Docker](https://img.shields.io/badge/Docker-Compose-blue)
-![CI/CD](https://github.com/Martins20321/Solicitation-API-SEA/actions/workflows/ci-cd.yml/badge.svg)
+![CI/CD](https://github.com/Martins20321/Caretrack-API/actions/workflows/ci-cd.yml/badge.svg)
 
-
-API REST desenvolvida como desafio técnico para a SEA Tecnologia, para gerenciamento de solicitações de atendimento com controle de acesso por perfil (CLIENT, ANALYST, ADMIN).
+API REST desenvolvida para gerenciamento de solicitações de atendimento com controle de acesso por perfil (CLIENT, ANALYST, ADMIN).
 
 ---
 
@@ -79,8 +78,8 @@ com.martinsdev.caretrack.api
 ### 1. Clone o repositório
 
 ```bash
-git clone https://github.com/Martins20321/Solicitation-API-SEA.git
-cd Solicitation-API-SEA
+git clone https://github.com/Martins20321/CareTrack-API.git
+cd CareTrack-API
 ```
 
 ### 2. Configure as variáveis de ambiente
@@ -88,10 +87,10 @@ cd Solicitation-API-SEA
 Crie o arquivo `.env` na raiz do projeto:
 
 ```env
-POSTGRES_DB=solicitation
+POSTGRES_DB=caretrack
 POSTGRES_USER=postgres
-POSTGRES_PASSWORD=solicitationsea@2026!
-JWT_SECRET=solicitationSecretKey@2026!
+POSTGRES_PASSWORD=caretrack@2026!
+JWT_SECRET=caretrackSecretKey@2026!
 ```
 
 ### 3. Suba os containers
@@ -103,25 +102,24 @@ docker compose up -d --build
 Aguarde todos os containers subirem:
 
 ```
-✔ Container solicitation-db   Healthy
-✔ Container solicitation-es   Healthy
-✔ Container solicitation-api  Started
+✔ Container caretrack-db   Healthy
+✔ Container caretrack-es   Healthy
+✔ Container caretrack-api  Started
 ```
+### 4. Migrações
+O projeto utiliza `spring.jpa.hibernate.ddl-auto=update` - o Hibernate cria e atualiza as tabelas automaticamente na inicialização. Não é necessário rodar migrações manualmente.
 
-### 4. Verifique o health check
+### 5. Verifique o health check
 
 ```bash
 GET http://localhost:8080/actuator/health
 ```
 
-### 5. Acesse a documentação
+### 6. Acesse a documentação
 
 ```
 http://localhost:8080/swagger-ui.html
 ```
-
-### Migrações
-O projeto utiliza `spring.jpa.hibernate.ddl-auto=update` - o Hibernate cria e atualiza as tabelas automaticamente na inicialização. Não é necessário rodar migrações manualmente.
 
 ---
 
@@ -146,7 +144,7 @@ A API usa **JWT Bearer Token**. Para autenticar:
 ### Credenciais iniciais (ADMIN)
 
 ```
-Email: admin@solicitation.com
+Email: admin@caretrack.com
 Senha: admin123456
 ```
 
@@ -175,7 +173,7 @@ POST /auth/login      → Autentica qualquer perfil
 **Login:**
 ```json
 {
-  "email": "admin@solicitation.com",
+  "email": "admin@caretrack.com",
   "password": "admin123456"
 }
 ```
@@ -194,7 +192,7 @@ PUT  /admin/users/{id}/coverage      → Configura UFs do analista
 POST /admin/users
 {
   "name": "Analista DF",
-  "email": "analyst@solicitation.com",
+  "email": "analyst@caretrack.com",
   "password": "123456",
   "role": "ANALYST"
 }
