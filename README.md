@@ -120,6 +120,9 @@ GET http://localhost:8080/actuator/health
 http://localhost:8080/swagger-ui.html
 ```
 
+### Migrações
+O projeto utiliza `spring.jpa.hibernate.ddl-auto=update` - o Hibernate cria e atualiza as tabelas automaticamente na inicialização. Não é necessário rodar migrações manualmente.
+
 ---
 
 ## Autenticação
