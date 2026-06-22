@@ -24,8 +24,8 @@ public class DataSeeder implements ApplicationRunner {
     public void run(ApplicationArguments args) throws Exception {
         if (repository.findByRole(RoleUser.ADMIN).isEmpty()){
             User user = User.builder()
-                    .name("adminSolicitation")
-                    .email("admin@solicitation.com")
+                    .name("adminCareTrack")
+                    .email("admin@caretrack.com")
                     .passwordHash(passwordEncoder.encode("admin123456"))
                     .role(RoleUser.ADMIN)
                     .enabled(true)
