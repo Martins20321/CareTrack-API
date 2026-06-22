@@ -1,7 +1,7 @@
 services:
   db:
     image: postgres:15
-    container_name: solicitation-db
+    container_name: caretrack-db
     restart: always
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
@@ -17,7 +17,7 @@ services:
 
   elasticsearch:
     image: elasticsearch:8.13.0
-    container_name: solicitation-es
+    container_name: caretrack-es
     restart: always
     environment:
       - discovery.type=single-node
@@ -33,7 +33,7 @@ services:
 
   app:
     build: .
-    container_name: solicitation-api
+    container_name: caretrack-api
     ports:
       - "8080:8080"
     depends_on:
@@ -42,7 +42,7 @@ services:
       elasticsearch:
         condition: service_healthy
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://solicitation-db:5432/${POSTGRES_DB}
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://caretrack-db:5432/${POSTGRES_DB}
       - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
       - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update

@@ -1,4 +1,4 @@
-name: Solicitation-API - CI Pipeline
+name: Caretrack-API - CI Pipeline
 
 on:
   push:

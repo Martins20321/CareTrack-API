@@ -50,7 +50,7 @@ Sistema de Solicitações de Atendimento com fluxo multi-step, onde clientes cri
 ## Arquitetura
 
 ```
-com.martinsdev.solicitation.api
+com.martinsdev.caretrack.api
 ├── controller/         # Endpoints REST
 ├── dto/                # Data Transfer Objects
 ├── infra/
